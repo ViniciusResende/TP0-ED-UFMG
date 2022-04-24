@@ -16,6 +16,7 @@ class Matrix {
     void initializeAsRandomMatrix();
     double warmUpMatrix();
     void printMatrix();
+    void writeMatrix(char outputFileName[]);
     void setElement(int x, int y, double value);
     double getElement(int x, int y);
     void copyMatrix(Matrix *dst, int dst_id);

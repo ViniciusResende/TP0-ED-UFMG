@@ -14,16 +14,18 @@
 static int choosedOption;
 char logname[100];
 int optRows, optColumns, regmem;
+char firstMatrixFile[100], secondMatrixFile[100], outputMatrixFile[100];
 
 void menu() {
   fprintf(stderr,"Matrix Class\n");
-  fprintf(stderr,"\t-s \t(sum matrices) \n");
-  fprintf(stderr,"\t-m \t(multiply matrices) \n");
-  fprintf(stderr,"\t-t \t(transpose matrix)\n");
-  fprintf(stderr,"\t-p <arq>\t(access register file)\n");
-  fprintf(stderr,"\t-l \t(register memory access)\n");
-  fprintf(stderr,"\t-x <int>\t(rows)\n");
-  fprintf(stderr,"\t-y <int>\t(columns)\n");
+  fprintf(stderr,"-s \t\t(sum matrices) \n");
+  fprintf(stderr,"-m \t\t(multiply matrices) \n");
+  fprintf(stderr,"-t \t\t(transpose matrix)\n");
+  fprintf(stderr,"-p <file>\t(access register file)\n");
+  fprintf(stderr,"-1 <file>\t(first matrix file)\n");
+  fprintf(stderr,"-2 <file>\t(second matrix file)\n");
+  fprintf(stderr,"-o <file>\t(output matrix file)\n");
+  fprintf(stderr,"-l \t\t(register memory access)\n");
 }
 
 
@@ -41,7 +43,7 @@ void parse_args(int argc,char ** argv) {
 
   // getopt - letra indica a opcao, : junto a letra indica parametro
   // no caso de escolher mais de uma operacao, vale a ultima
-  while ((c = getopt(argc, argv, "smtp:x:y:lh")) != EOF)
+  while ((c = getopt(argc, argv, "smtp:1:2:o:x:y:lh")) != EOF)
     switch(c) {
       case 'm':
         warnAssert(choosedOption==-1,"More than one option choosed");
@@ -56,7 +58,16 @@ void parse_args(int argc,char ** argv) {
         choosedOption = TRANSPOSEOPETARION;
         break;
       case 'p': 
-        strcpy(logname,optarg);
+        strcpy(logname, optarg);
+        break;
+      case '1': 
+        strcpy(firstMatrixFile, optarg);
+        break;
+      case '2': 
+        strcpy(secondMatrixFile, optarg);
+        break;
+      case 'o': 
+        strcpy(outputMatrixFile, optarg);
         break;
       case 'x': 
         optRows = atoi(optarg);
@@ -77,20 +88,40 @@ void parse_args(int argc,char ** argv) {
   errorAssert(choosedOption > 0,"Matrix Class - you must choose an operation");
   errorAssert(strlen(logname) > 0,
     "Matrix Class - access register file name must be previously defined");
-  errorAssert(optRows > 0,"Matrix Class - X dimension of your marix must be positive");
-  errorAssert(optColumns > 0,"Matrix Class - Y dimension of your marix must be positive");
+}
+
+Matrix setupMatrix(int matrixId, char inputFileName[]) {
+  FILE *file;
+  file = fopen(inputFileName, "r");
+  errorAssert(file != NULL,"\nFailed to open Matrix input file");
+  int rows, columns;
+  double aux;
+  fscanf(file, "%d ", &rows);
+  fscanf(file, "%d ", &columns);
+
+  Matrix temporary(rows, columns, matrixId);
+
+  while (feof(file) == 0) {
+    for (int i = 0; i < rows; i++) {
+      for(int j = 0; j < columns; j++) {
+        fscanf(file, "%lf ", &aux);
+        temporary.setElement(i, j, aux);
+      }
+    }
+  }
+  
+  fclose(file);
+  return temporary;
 }
 
 void executeOperation() {
   setFaseMemLog(0);
 
-  Matrix A(optRows, optColumns, 0);
-  A.initializeAsRandomMatrix();
+  Matrix A = setupMatrix(0, firstMatrixFile);
 
-  Matrix B(optRows, optColumns, 1);
-  B.initializeAsRandomMatrix();
+  Matrix B = setupMatrix(1, secondMatrixFile);
 
-  Matrix C(optRows, optColumns, 2);
+  Matrix C(1, 1, 2);
   C.initializeAsNullMatrix();
 
   setFaseMemLog(1);
@@ -107,14 +138,16 @@ void executeOperation() {
   setFaseMemLog(2);
   C.warmUpMatrix();
 
-  if (regmem) C.printMatrix();
+  if (regmem) { 
+    C.printMatrix();
+    C.writeMatrix(outputMatrixFile);
+  }
 }
 
 void executeTranpose() {
   setFaseMemLog(0);
 
-  Matrix A(optRows, optColumns, 0);
-  A.initializeAsRandomMatrix();
+  Matrix A = setupMatrix(0, firstMatrixFile);
 
 	setFaseMemLog(1);
 
@@ -126,7 +159,10 @@ void executeTranpose() {
 
   A.warmUpMatrix();
 
-	if (regmem) A.printMatrix();
+	if (regmem) { 
+    A.printMatrix();
+    A.writeMatrix(outputMatrixFile);
+  }
 }
 
 int main(int argc, char ** argv) {

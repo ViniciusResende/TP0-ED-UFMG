@@ -68,11 +68,11 @@ double Matrix::warmUpMatrix() {
 void Matrix::printMatrix() {
   // print columns identifiers
   printf("%9s"," ");
-  for(int i = 0; i < this->columns; i++) printf("%8d ",i);
+  for (int i = 0; i < this->columns; i++) printf("%8d ", i);
   printf("\n");
 
   for (int i = 0; i < this->rows; i++) {
-    printf("%8d ",i);
+    printf("%8d ", i);
     for(int j = 0; j < this->columns; j++) {
       printf("%8.2f ", this->mat[i][j]);
       READMEMLOG((long int)(&(this->mat[i][j])) ,sizeof(double), this->id);
@@ -98,9 +98,29 @@ void Matrix::printMatrix() {
   // }
 }
 
+void Matrix::writeMatrix(char outputFileName[]) {
+  FILE *file;
+  file = fopen(outputFileName, "w");
+  errorAssert(file != NULL,"\nFailed to open Matrix output file");
+
+  // write columns identifiers
+  fprintf(file, "%9s"," ");
+  for (int i = 0; i < this->columns; i++) fprintf(file, "%8d ", i);
+  fprintf(file, "\n");
+
+  for (int i = 0; i < this->rows; i++) {
+    fprintf(file, "%8d ", i);
+    for(int j = 0; j < this->columns; j++) {
+      fprintf(file, "%8.2f ", this->mat[i][j]);
+      READMEMLOG((long int)(&(this->mat[i][j])) ,sizeof(double), this->id);
+    }
+    fprintf(file, "\n");
+  }
+}
+
 void Matrix::setElement(int x, int y, double value) {
-  errorAssert((x > 0) && (x <= this->rows), "Invalid row index");
-  errorAssert((y > 0) && (y <= this->columns), "Invalid column index");
+  errorAssert((x >= 0) && (x < this->rows), "Invalid row index");
+  errorAssert((y >= 0) && (y < this->columns), "Invalid column index");
 
   // int offset = x * this->columns + y;
   this->mat[x][y] = value;
@@ -108,8 +128,8 @@ void Matrix::setElement(int x, int y, double value) {
 }
 
 double Matrix::getElement(int x, int y) {
-  errorAssert((x > 0) && (x <= this->rows), "Invalid row index");
-  errorAssert((y > 0) && (y <= this->columns), "Invalid column index");
+  errorAssert((x >= 0) && (x < this->rows), "Invalid row index");
+  errorAssert((y >= 0) && (y < this->columns), "Invalid column index");
 
   // int offset = x * this->columns + y;
   READMEMLOG((long int) (&(this->mat[x][y])), sizeof(double), this->id);
@@ -188,7 +208,7 @@ void Matrix::transposeMatrix() {
 
 Matrix::~Matrix() {
   warnAssert((this->rows > 0) && (this->columns > 0),"Matrix has already been destroyed");
-  printf("Apagando matriz %d\n", this->id);
+  printf("Deleting matrix: %d\n", this->id);
 
   for(int i = 0; i < this->rows; i++) {
     free(this->mat[i]);
