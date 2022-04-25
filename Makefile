@@ -35,12 +35,15 @@ MAIN = Main
 TARGET = run.out
 SRC = $(wildcard $(SRC_FOLDER)*.cc)
 OBJ = $(patsubst $(SRC_FOLDER)%.cc, $(OBJ_FOLDER)%.o, $(SRC))
+EXE = $(BIN_FOLDER)/run.out
+
+all: build
+
+build: $(OBJ)
+	$(CC) $(CXXFLAGS) -o $(BIN_FOLDER)$(TARGET) $(OBJ)
 
 $(OBJ_FOLDER)%.o: $(SRC_FOLDER)%.cc
 	$(CC) $(CXXFLAGS) -c $< -o $@ -I$(INCLUDE_FOLDER)
-
-all: $(OBJ)
-	$(CC) $(CXXFLAGS) -o $(BIN_FOLDER)$(TARGET) $(OBJ)
 
 clean:
 	@rm -rf $(OBJ_FOLDER)* $(BIN_FOLDER)*
