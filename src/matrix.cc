@@ -184,7 +184,7 @@ void Matrix::mutiplyMatrices(Matrix *parcelMatrix, Matrix *resultMatrix) {
         resultMatrix_aux->mat[i][j] += this->mat[i][k] * parcelMatrix->mat[k][j];
         READMEMLOG((long int) (&(this->mat[i][k])), sizeof(double), this->id);
         READMEMLOG((long int) (&(parcelMatrix->mat[k][j])), sizeof(double), parcelMatrix->id);
-        WRITEMEMLOG((long int) (&(resultMatrix->mat[i][j])), sizeof(double), resultMatrix->id);
+        WRITEMEMLOG((long int) (&(resultMatrix_aux->mat[i][j])), sizeof(double), resultMatrix_aux->id);
       }
     }
   }
