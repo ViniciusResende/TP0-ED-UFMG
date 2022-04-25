@@ -40,7 +40,7 @@ OBJ = $(patsubst $(SRC_FOLDER)%.cc, $(OBJ_FOLDER)%.o, $(SRC))
 EXE = $(BIN_FOLDER)/run.out
 ANALISAMEM = ./analisamem/bin/analisamem
 
-all: build mem
+all: build mem perf
 
 build: $(OBJ)
 	$(CC) $(CXXFLAGS) -o $(BIN_FOLDER)$(TARGET) $(OBJ)
@@ -63,6 +63,26 @@ mem: $(EXE)
 	mkdir /tmp/transpdin
 	$(ANALISAMEM) -i /tmp/transpmatrixlog.out -p /tmp/transpdin/transpdin
 	gnuplot /tmp/transpdin/*.gp
+
+perf: $(EXE)
+	$(EXE) -s -p /tmp/sumMat500x500.out -1 $(ASSETS_FOLDER)/PerfMatrix500x500.txt -2 $(ASSETS_FOLDER)/PerfMatrix500x500.txt -o $(OUT_FOLDER)/sumMat500x500.txt
+	$(EXE) -m -p /tmp/multMat500x500.out -1 $(ASSETS_FOLDER)/PerfMatrix500x500.txt -2 $(ASSETS_FOLDER)/PerfMatrix500x500.txt -o $(OUT_FOLDER)/multMat500x500.txt
+	$(EXE) -t -p /tmp/transpMat500x500.out -1 $(ASSETS_FOLDER)/PerfMatrix500x500.txt -2 $(ASSETS_FOLDER)/PerfMatrix500x500.txt -o $(OUT_FOLDER)/transpMat500x500.txt
+	$(EXE) -s -p /tmp/sumMat600x600.out -1 $(ASSETS_FOLDER)/PerfMatrix600x600.txt -2 $(ASSETS_FOLDER)/PerfMatrix600x600.txt -o $(OUT_FOLDER)/sumMat600x600.txt
+	$(EXE) -m -p /tmp/multMat600x600.out -1 $(ASSETS_FOLDER)/PerfMatrix600x600.txt -2 $(ASSETS_FOLDER)/PerfMatrix600x600.txt -o $(OUT_FOLDER)/multMat600x600.txt
+	$(EXE) -t -p /tmp/transpMat600x600.out -1 $(ASSETS_FOLDER)/PerfMatrix600x600.txt -2 $(ASSETS_FOLDER)/PerfMatrix600x600.txt -o $(OUT_FOLDER)/transpMat600x600.txt
+	$(EXE) -s -p /tmp/sumMat700x700.out -1 $(ASSETS_FOLDER)/PerfMatrix700x700.txt -2 $(ASSETS_FOLDER)/PerfMatrix700x700.txt -o $(OUT_FOLDER)/sumMat700x700.txt
+	$(EXE) -m -p /tmp/multMat700x700.out -1 $(ASSETS_FOLDER)/PerfMatrix700x700.txt -2 $(ASSETS_FOLDER)/PerfMatrix700x700.txt -o $(OUT_FOLDER)/multMat700x700.txt
+	$(EXE) -t -p /tmp/transpMat700x700.out -1 $(ASSETS_FOLDER)/PerfMatrix700x700.txt -2 $(ASSETS_FOLDER)/PerfMatrix700x700.txt -o $(OUT_FOLDER)/transpMat700x700.txt
+	$(EXE) -s -p /tmp/sumMat800x800.out -1 $(ASSETS_FOLDER)/PerfMatrix800x800.txt -2 $(ASSETS_FOLDER)/PerfMatrix800x800.txt -o $(OUT_FOLDER)/sumMat800x800.txt
+	$(EXE) -m -p /tmp/multMat800x800.out -1 $(ASSETS_FOLDER)/PerfMatrix800x800.txt -2 $(ASSETS_FOLDER)/PerfMatrix800x800.txt -o $(OUT_FOLDER)/multMat800x800.txt
+	$(EXE) -t -p /tmp/transpMat800x800.out -1 $(ASSETS_FOLDER)/PerfMatrix800x800.txt -2 $(ASSETS_FOLDER)/PerfMatrix800x800.txt -o $(OUT_FOLDER)/transpMat800x800.txt
+	$(EXE) -s -p /tmp/sumMat900x900.out -1 $(ASSETS_FOLDER)/PerfMatrix900x900.txt -2 $(ASSETS_FOLDER)/PerfMatrix900x900.txt -o $(OUT_FOLDER)/sumMat900x900.txt
+	$(EXE) -m -p /tmp/multMat900x900.out -1 $(ASSETS_FOLDER)/PerfMatrix900x900.txt -2 $(ASSETS_FOLDER)/PerfMatrix900x900.txt -o $(OUT_FOLDER)/multMat900x900.txt
+	$(EXE) -t -p /tmp/transpMat900x900.out -1 $(ASSETS_FOLDER)/PerfMatrix900x900.txt -2 $(ASSETS_FOLDER)/PerfMatrix900x900.txt -o $(OUT_FOLDER)/transpMat900x900.txt
+	$(EXE) -s -p /tmp/sumMat1000x1000.out -1 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -2 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -o $(OUT_FOLDER)/sumMat1000x1000.txt
+	$(EXE) -m -p /tmp/multMat1000x1000.out -1 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -2 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -o $(OUT_FOLDER)/multMat1000x1000.txt
+	$(EXE) -t -p /tmp/transpMat1000x1000.out -1 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -2 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -o $(OUT_FOLDER)/transpMat1000x1000.txt
 
 $(OBJ_FOLDER)%.o: $(SRC_FOLDER)%.cc
 	$(CC) $(CXXFLAGS) -c $< -o $@ -I$(INCLUDE_FOLDER)
