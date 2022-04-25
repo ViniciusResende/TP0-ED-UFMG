@@ -21,7 +21,7 @@
 
 # cc and flags
 CC = g++
-CXXFLAGS = -std=c++11 -g -Wall
+CXXFLAGS = -pg -std=c++11 -g -Wall
 #CXXFLAGS = -std=c++11 -O3 -Wall
 
 # folders
@@ -40,9 +40,10 @@ OBJ = $(patsubst $(SRC_FOLDER)%.cc, $(OBJ_FOLDER)%.o, $(SRC))
 EXE = $(BIN_FOLDER)/run.out
 ANALISAMEM = ./analisamem/bin/analisamem
 
-all: build mem perf
+all: build mem perf gprof
 
 build: $(OBJ)
+	export GPROF=profile:thread
 	$(CC) $(CXXFLAGS) -o $(BIN_FOLDER)$(TARGET) $(OBJ)
 
 mem: $(EXE)
@@ -84,8 +85,17 @@ perf: $(EXE)
 	$(EXE) -m -p /tmp/multMat1000x1000.out -1 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -2 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -o $(OUT_FOLDER)/multMat1000x1000.txt
 	$(EXE) -t -p /tmp/transpMat1000x1000.out -1 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -2 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -o $(OUT_FOLDER)/transpMat1000x1000.txt
 
+gprof: $(EXE)
+	$(EXE) -s -p /tmp/sumMat1000x1000.out -1 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -2 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -o $(OUT_FOLDER)/sumMat1000x1000.txt
+	gprof $(EXE) gmon.out > /tmp/sumMat1000x1000gprof.txt
+	$(EXE) -m -p /tmp/multMat1000x1000.out -1 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -2 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -o $(OUT_FOLDER)/sumMat1000x1000.txt
+	gprof $(EXE) gmon.out > /tmp/multMat1000x1000.txt
+	$(EXE) -t -p /tmp/transpMat1000x1000.out -1 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -2 $(ASSETS_FOLDER)/PerfMatrix1000x1000.txt -o $(OUT_FOLDER)/sumMat1000x1000.txt
+	gprof $(EXE) gmon.out > /tmp/transpMat1000x1000.txt
+
 $(OBJ_FOLDER)%.o: $(SRC_FOLDER)%.cc
 	$(CC) $(CXXFLAGS) -c $< -o $@ -I$(INCLUDE_FOLDER)
 
 clean:
-	@rm -rf $(OBJ_FOLDER)* $(BIN_FOLDER)*
+	@unset GPROF
+	@rm -rf $(OBJ_FOLDER)* $(BIN_FOLDER)* gmon.out
