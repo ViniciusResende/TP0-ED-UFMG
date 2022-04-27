@@ -98,4 +98,4 @@ $(OBJ_FOLDER)%.o: $(SRC_FOLDER)%.cc
 
 clean:
 	@unset GPROF
-	@rm -rf $(OBJ_FOLDER)* $(BIN_FOLDER)* gmon.out
+	@rm -rf $(OBJ_FOLDER)* $(BIN_FOLDER)* $(OUT_FOLDER)* gmon.out
