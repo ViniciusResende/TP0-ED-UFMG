@@ -15,6 +15,7 @@ class Matrix {
 
     void initializeAsNullMatrix();
     void initializeAsRandomMatrix();
+    void initializeAsInputedFileMatrix(char inputFileName[]);
     double warmUpMatrix();
     void printMatrix();
     void writeMatrix(char outputFileName[]);
