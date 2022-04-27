@@ -88,6 +88,34 @@ void Matrix::initializeAsRandomMatrix() {
   }
 }
 
+
+void Matrix::initializeAsInputedFileMatrix(char inputFileName[]) {
+  errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
+
+  FILE *file;
+  file = fopen(inputFileName, "r");
+  errorAssert(file != NULL,"\nFailed to open Matrix input file");
+  int rows, columns;
+  double aux;
+  fscanf(file, "%d ", &rows);
+  fscanf(file, "%d ", &columns);
+
+  Matrix *auxMatrix = new Matrix(rows, columns, this->id);
+
+  while (feof(file) == 0) {
+    for (int i = 0; i < rows; i++) {
+      for(int j = 0; j < columns; j++) {
+        fscanf(file, "%lf ", &aux);
+        auxMatrix->mat[i][j] = aux;
+        WRITEMEMLOG((long int) (&(auxMatrix->mat[i][j])), sizeof(double), auxMatrix->id);
+      }
+    }
+  }
+  
+  fclose(file);
+  (*this) = (*auxMatrix);
+}
+
 double Matrix::warmUpMatrix() {
   double aux, s=0.0;
 
