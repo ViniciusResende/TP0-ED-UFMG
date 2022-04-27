@@ -11,10 +11,13 @@
 #define MULTIPLYOPERATION 2
 #define TRANSPOSEOPETARION 3
 
-static int choosedOption;
-char logname[100];
-int optRows, optColumns, regmem;
-char firstMatrixFile[100], secondMatrixFile[100], outputMatrixFile[100];
+struct ConfigStruct {
+  int choosedOption;
+  bool regmem;
+  char logname[100], firstMatrixFile[100], secondMatrixFile[100], outputMatrixFile[100];
+};
+
+ConfigStruct config;
 
 void menu() {
   fprintf(stderr,"Matrix Class\n");
@@ -35,48 +38,43 @@ void parse_args(int argc,char ** argv) {
 
   int c;
 
-  choosedOption = -1;
-  optRows = -1;
-  optColumns = -1;
-  regmem = 0;
-  logname[0] = 0;
+  config.choosedOption = -1;
+  config.regmem = false;
+  config.logname[0] = 0;
+  config.firstMatrixFile[0] = 0;
+  config.secondMatrixFile[0] = 0;
+  config.outputMatrixFile[0] = 0;
 
   // getopt - letra indica a opcao, : junto a letra indica parametro
   // no caso de escolher mais de uma operacao, vale a ultima
-  while ((c = getopt(argc, argv, "smtp:1:2:o:x:y:lh")) != EOF)
+  while ((c = getopt(argc, argv, "smtp:1:2:o:lh")) != EOF)
     switch(c) {
       case 'm':
-        warnAssert(choosedOption==-1,"More than one option choosed");
-        choosedOption = MULTIPLYOPERATION;
+        warnAssert(config.choosedOption==-1,"More than one option choosed");
+        config.choosedOption = MULTIPLYOPERATION;
         break;
       case 's':
-        warnAssert(choosedOption==-1,"More than one option choosed");
-        choosedOption = SUMOPERATION;
+        warnAssert(config.choosedOption==-1,"More than one option choosed");
+        config.choosedOption = SUMOPERATION;
         break;
       case 't':
-        warnAssert(choosedOption==-1,"More than one option choosed");
-        choosedOption = TRANSPOSEOPETARION;
+        warnAssert(config.choosedOption==-1,"More than one option choosed");
+        config.choosedOption = TRANSPOSEOPETARION;
         break;
       case 'p': 
-        strcpy(logname, optarg);
+        strcpy(config.logname, optarg);
         break;
       case '1': 
-        strcpy(firstMatrixFile, optarg);
+        strcpy(config.firstMatrixFile, optarg);
         break;
       case '2': 
-        strcpy(secondMatrixFile, optarg);
+        strcpy(config.secondMatrixFile, optarg);
         break;
       case 'o': 
-        strcpy(outputMatrixFile, optarg);
-        break;
-      case 'x': 
-        optRows = atoi(optarg);
-        break;
-      case 'y': 
-        optColumns = atoi(optarg);
+        strcpy(config.outputMatrixFile, optarg);
         break;
       case 'l': 
-        regmem = 1;
+        config.regmem = true;
         break;
       default:
         menu();
@@ -85,17 +83,19 @@ void parse_args(int argc,char ** argv) {
     }
 
   // verificacao da consistencia das opcoes
-  errorAssert(choosedOption > 0,"Matrix Class - you must choose an operation");
-  errorAssert(strlen(logname) > 0,
+  errorAssert(config.choosedOption > 0,"Matrix Class - you must choose an operation");
+  errorAssert(strlen(config.logname) > 0,
     "Matrix Class - access register file name must be previously defined");
+  errorAssert(strlen(config.firstMatrixFile) > 0,
+    "Matrix Class - first matrix input file name must be previously defined");
 }
 
 void executeOperation() {
   setFaseMemLog(0);
 
-  Matrix A(firstMatrixFile, 0);
+  Matrix A(config.firstMatrixFile, 0);
 
-  Matrix B(secondMatrixFile, 1);
+  Matrix B(config.secondMatrixFile, 1);
 
   Matrix C(1, 1, 2);
   C.initializeAsNullMatrix();
@@ -106,24 +106,24 @@ void executeOperation() {
   B.warmUpMatrix();
   C.warmUpMatrix();
 
-  if(choosedOption == SUMOPERATION)
+  if(config.choosedOption == SUMOPERATION)
     A.sumMatrices(&B, &C);
-  else if(choosedOption == MULTIPLYOPERATION)
+  else if(config.choosedOption == MULTIPLYOPERATION)
     A.mutiplyMatrices(&B, &C);
 
   setFaseMemLog(2);
   C.warmUpMatrix();
 
-  if (regmem) { 
+  if (config.regmem) { 
     C.printMatrix();
-    C.writeMatrix(outputMatrixFile);
+    C.writeMatrix(config.outputMatrixFile);
   }
 }
 
 void executeTranpose() {
   setFaseMemLog(0);
 
-  Matrix A(firstMatrixFile, 0);
+  Matrix A(config.firstMatrixFile, 0);
 
 	setFaseMemLog(1);
 
@@ -135,9 +135,9 @@ void executeTranpose() {
 
   A.warmUpMatrix();
 
-	if (regmem) { 
+	if (config.regmem) { 
     A.printMatrix();
-    A.writeMatrix(outputMatrixFile);
+    A.writeMatrix(config.outputMatrixFile);
   }
 }
 
@@ -146,16 +146,16 @@ int main(int argc, char ** argv) {
   parse_args(argc,argv);
 
   // iniciar registro de acesso
-  startMemLog(logname);
+  startMemLog(config.logname);
 
   // ativar ou nao o registro de acesso
-  if (regmem) 
+  if (config.regmem) 
     activateMemLog();
   else 
     deactivateMemLog();
 
   // execucao dependente da operacao escolhida
-  switch (choosedOption) {
+  switch (config.choosedOption) {
     case SUMOPERATION:
       executeOperation();
 	    break;
