@@ -3,11 +3,49 @@
 
 // Superior limit of random initialization
 #define INITRANDOMRANGE 10
-// Macro to swap elements
-#define ELEMSWAP(x,y) (x+=y,y=x-y,x-=y)
 
 Matrix::Matrix() : Matrix(0, 0, -1) {
 }
+
+Matrix::Matrix(char inputFileName[], int id) {
+  FILE *file;
+  file = fopen(inputFileName, "r");
+  errorAssert(file != NULL,"\nFailed to open Matrix input file");
+  int rows, columns;
+  double aux;
+  fscanf(file, "%d ", &rows);
+  fscanf(file, "%d ", &columns);
+
+  errorAssert(rows>0,"Null dimension");
+  errorAssert(columns>0,"Null dimension");
+  warnAssert(rows<=MAXRECOMMENDEDSIZE,"X dimension above the recommended value");
+  warnAssert(columns<=MAXRECOMMENDEDSIZE,"Y dimension above the recommended value");
+
+  this->rows = rows;
+  this->columns = columns;
+  this->id = id;
+
+  this->mat = (double**) malloc(this->rows * sizeof(double*));
+  for(int i = 0; i < this->rows; i++) {
+    this->mat[i] = (double*) malloc(this->columns * sizeof(double));
+    errorAssert(this->mat[i]!=NULL,"Failed to allocate memory");
+  }
+
+  errorAssert(this->mat!=NULL,"Failed to allocate memory");
+
+  while (feof(file) == 0) {
+    for (int i = 0; i < rows; i++) {
+      for(int j = 0; j < columns; j++) {
+        fscanf(file, "%lf ", &aux);
+        this->mat[i][j] = aux;
+        WRITEMEMLOG((long int) (&(this->mat[i][j])), sizeof(double), this->id);
+      }
+    }
+  }
+  
+  fclose(file);
+}
+
 
 Matrix::Matrix(int rows, int columns, int id) {
   errorAssert(rows>0,"Null dimension");
@@ -41,7 +79,6 @@ void Matrix::initializeAsNullMatrix() {
 
 void Matrix::initializeAsRandomMatrix() {
   errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
-  this->initializeAsNullMatrix(); //TODO: verify if is really necessary
 
   for (int i = 0; i < this->rows; i++) {
     for (int j = 0; j < this->columns; j++) {

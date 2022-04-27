@@ -90,36 +90,12 @@ void parse_args(int argc,char ** argv) {
     "Matrix Class - access register file name must be previously defined");
 }
 
-Matrix setupMatrix(int matrixId, char inputFileName[]) {
-  FILE *file;
-  file = fopen(inputFileName, "r");
-  errorAssert(file != NULL,"\nFailed to open Matrix input file");
-  int rows, columns;
-  double aux;
-  fscanf(file, "%d ", &rows);
-  fscanf(file, "%d ", &columns);
-
-  Matrix temporary(rows, columns, matrixId);
-
-  while (feof(file) == 0) {
-    for (int i = 0; i < rows; i++) {
-      for(int j = 0; j < columns; j++) {
-        fscanf(file, "%lf ", &aux);
-        temporary.setElement(i, j, aux);
-      }
-    }
-  }
-  
-  fclose(file);
-  return temporary;
-}
-
 void executeOperation() {
   setFaseMemLog(0);
 
-  Matrix A = setupMatrix(0, firstMatrixFile);
+  Matrix A(firstMatrixFile, 0);
 
-  Matrix B = setupMatrix(1, secondMatrixFile);
+  Matrix B(secondMatrixFile, 1);
 
   Matrix C(1, 1, 2);
   C.initializeAsNullMatrix();
@@ -147,7 +123,7 @@ void executeOperation() {
 void executeTranpose() {
   setFaseMemLog(0);
 
-  Matrix A = setupMatrix(0, firstMatrixFile);
+  Matrix A(firstMatrixFile, 0);
 
 	setFaseMemLog(1);
 

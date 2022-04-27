@@ -11,6 +11,7 @@ class Matrix {
   public:  
     Matrix();
     Matrix(int rows, int columns, int id);
+    Matrix(char inputFileName[], int id);
 
     void initializeAsNullMatrix();
     void initializeAsRandomMatrix();
