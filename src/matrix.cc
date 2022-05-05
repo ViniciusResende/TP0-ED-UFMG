@@ -4,7 +4,7 @@
 // Superior limit of random initialization
 #define INITRANDOMRANGE 10
 
-Matrix::Matrix() : Matrix(0, 0, -1) {
+Matrix::Matrix() : Matrix(1, 1, -1) {
 }
 
 Matrix::Matrix(char inputFileName[], int id) {
@@ -68,6 +68,7 @@ Matrix::Matrix(int rows, int columns, int id) {
 
 void Matrix::initializeAsNullMatrix() {
   errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
+  errorAssert((this->rows > 0) && (this->columns > 0),"Matrix has already been destroyed");
 
   for (int i = 0; i < this->rows; i++) {
     for(int j = 0; j < this->columns; j++) {
@@ -79,6 +80,7 @@ void Matrix::initializeAsNullMatrix() {
 
 void Matrix::initializeAsRandomMatrix() {
   errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
+  errorAssert((this->rows > 0) && (this->columns > 0),"Matrix has already been destroyed");
 
   for (int i = 0; i < this->rows; i++) {
     for (int j = 0; j < this->columns; j++) {
@@ -88,9 +90,9 @@ void Matrix::initializeAsRandomMatrix() {
   }
 }
 
-
 void Matrix::initializeAsInputedFileMatrix(char inputFileName[]) {
   errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
+  errorAssert((this->rows > 0) && (this->columns > 0),"Matrix been destroyed");
 
   FILE *file;
   file = fopen(inputFileName, "r");
@@ -117,6 +119,9 @@ void Matrix::initializeAsInputedFileMatrix(char inputFileName[]) {
 }
 
 double Matrix::warmUpMatrix() {
+  errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
+  errorAssert((this->rows > 0) && (this->columns > 0),"Matrix been destroyed");
+
   double aux, s=0.0;
 
   for (int i = 0; i < this->rows; i++) {
@@ -131,6 +136,9 @@ double Matrix::warmUpMatrix() {
 }
 
 void Matrix::printMatrix() {
+  errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
+  errorAssert((this->rows > 0) && (this->columns > 0),"Matrix been destroyed");
+
   // print columns identifiers
   printf("%9s"," ");
   for (int i = 0; i < this->columns; i++) printf("%8d ", i);
@@ -164,6 +172,9 @@ void Matrix::printMatrix() {
 }
 
 void Matrix::writeMatrix(char outputFileName[]) {
+  errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
+  errorAssert((this->rows > 0) && (this->columns > 0),"Matrix has already been destroyed");
+
   FILE *file;
   file = fopen(outputFileName, "w");
   errorAssert(file != NULL,"\nFailed to open Matrix output file");
@@ -202,6 +213,9 @@ double Matrix::getElement(int x, int y) {
 }
 
 void Matrix::copyMatrix(Matrix *dst, int dst_id) {
+  errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
+  errorAssert((this->rows > 0) && (this->columns > 0),"Matrix has already been destroyed");
+
   Matrix *dst_aux = new Matrix(this->rows, this->columns, dst_id);
   dst_aux->initializeAsNullMatrix();
 
@@ -218,6 +232,7 @@ void Matrix::copyMatrix(Matrix *dst, int dst_id) {
 }
 
 void Matrix::sumMatrices(Matrix *parcelMatrix, Matrix *resultMatrix) {
+  errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
   errorAssert(this->rows == parcelMatrix->rows, "Matrices rows do not match");
   errorAssert(this->columns == parcelMatrix->columns, "Matrices columns do not match");
 
@@ -238,6 +253,7 @@ void Matrix::sumMatrices(Matrix *parcelMatrix, Matrix *resultMatrix) {
 }
 
 void Matrix::mutiplyMatrices(Matrix *parcelMatrix, Matrix *resultMatrix) {
+  errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
   errorAssert(this->columns == parcelMatrix->rows, "Dimensions are not compatible");
 
   Matrix *resultMatrix_aux = new Matrix(this->rows, parcelMatrix->columns, resultMatrix->id);
@@ -258,6 +274,9 @@ void Matrix::mutiplyMatrices(Matrix *parcelMatrix, Matrix *resultMatrix) {
 }
 
 void Matrix::transposeMatrix() {
+  errorAssert(this->mat!=NULL,"Class was not correctly instaciated");
+  errorAssert((this->rows > 0) && (this->columns > 0),"Matrix has already been destroyed");
+
   Matrix *auxMatrix = new Matrix(this->columns, this->rows, this->id);
 
   for (int i = 0; i < this->rows; i++) {
