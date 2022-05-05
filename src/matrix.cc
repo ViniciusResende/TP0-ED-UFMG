@@ -152,23 +152,6 @@ void Matrix::printMatrix() {
     }
     printf("\n");
   }
-
-  // print lines
-  // int aux = 0, currentLine = 0;
-  // for (int i = 0; i < this->rows * this->columns; i++) {
-  //   if(aux < this->columns) {
-  //     if(aux == 0) printf("%8d ", currentLine);
-  //     printf("%8.2f ", *(this->mat[i]));
-  //     READMEMLOG((long int) (&(*(this->mat[i]))), sizeof(double), this->id);
-  //     aux++;
-  //   } else {
-  //     printf("%8.2f ", *(this->mat[i]));
-  //     READMEMLOG((long int) (&(*(this->mat[i]))), sizeof(double), this->id);
-  //     aux = 0;
-  //     currentLine++;
-  //     printf("\n");
-  //   }
-  // }
 }
 
 void Matrix::writeMatrix(char outputFileName[]) {
@@ -198,7 +181,6 @@ void Matrix::setElement(int x, int y, double value) {
   errorAssert((x >= 0) && (x < this->rows), "Invalid row index");
   errorAssert((y >= 0) && (y < this->columns), "Invalid column index");
 
-  // int offset = x * this->columns + y;
   this->mat[x][y] = value;
   WRITEMEMLOG((long int) (&(this->mat[x][y])), sizeof(double), this->id);
 }
@@ -207,7 +189,6 @@ double Matrix::getElement(int x, int y) {
   errorAssert((x >= 0) && (x < this->rows), "Invalid row index");
   errorAssert((y >= 0) && (y < this->columns), "Invalid column index");
 
-  // int offset = x * this->columns + y;
   READMEMLOG((long int) (&(this->mat[x][y])), sizeof(double), this->id);
   return this->mat[x][y];
 }
@@ -228,7 +209,6 @@ void Matrix::copyMatrix(Matrix *dst, int dst_id) {
   }
 
   (*dst) = (*dst_aux);
-  // delete dst_aux;
 }
 
 void Matrix::sumMatrices(Matrix *parcelMatrix, Matrix *resultMatrix) {
@@ -249,7 +229,6 @@ void Matrix::sumMatrices(Matrix *parcelMatrix, Matrix *resultMatrix) {
   }
 
   (*resultMatrix) = (*resultMatrix_aux);
-  // delete resultMatrix_aux;
 }
 
 void Matrix::mutiplyMatrices(Matrix *parcelMatrix, Matrix *resultMatrix) {
