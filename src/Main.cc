@@ -34,7 +34,6 @@ void menu() {
 
 void parse_args(int argc,char ** argv) {
   extern char * optarg;
-  // extern int optind;
 
   int c;
 
@@ -82,7 +81,6 @@ void parse_args(int argc,char ** argv) {
         break;
     }
 
-  // verificacao da consistencia das opcoes
   errorAssert(config.choosedOption > 0,"Matrix Class - you must choose an operation");
   errorAssert(strlen(config.logname) > 0,
     "Matrix Class - access register file name must be previously defined");
@@ -142,19 +140,15 @@ void executeTranpose() {
 }
 
 int main(int argc, char ** argv) {
-  // avaliar linha de comando
   parse_args(argc,argv);
 
-  // iniciar registro de acesso
   startMemLog(config.logname);
 
-  // ativar ou nao o registro de acesso
   if (config.regmem) 
     activateMemLog();
   else 
     deactivateMemLog();
 
-  // execucao dependente da operacao escolhida
   switch (config.choosedOption) {
     case SUMOPERATION:
       executeOperation();
