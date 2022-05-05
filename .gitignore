@@ -2,4 +2,8 @@ obj/*
 bin/*
 out/*
 
+analisamem/obj/*
+analisamem/bin/*
+analisamem/teste/*
+
 gmon.out
